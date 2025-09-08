@@ -1,0 +1,107 @@
+---
+title: "Homework3"
+author: "Kim Costello"
+format: html
+editor: visual
+---
+
+## Setting up the Environment
+
+Read in the file provided.
+
+```{r}
+load("hw2_list.rda")
+```
+
+## Task 1: Control Flow Practice
+
+Create a new column in each data frame called **status**.
+
+```{r}
+bp_list$treatment$status <- character(20)
+bp_list$placebo$status <- character(10)
+```
+
+For the treatment data frame, create a **for** loop and use **if/then/else** logic to create the **status** column's values for post-treatment BP measurement.
+
+```{r}
+for (i in seq_along(bp_list$treatment$post_bp)){
+  if(bp_list$treatment$post_bp[i] > 130) {
+    bp_list$treatment$status[i] = "high"
+  } else if(bp_list$treatment$post_bp[i] > 120) {
+    bp_list$treatment$status[i] = "borderline"
+  } else if(bp_list$treatment$post_bp[i] <= 120) {
+    bp_list$treatment$status[i] = "optimal"
+  } else {
+    bp_list$treatment$status[i] = "error"
+  }
+}
+
+bp_list$treatment
+```
+
+Repeat for the placebo data frame.
+
+```{r}
+for (i in seq_along(bp_list$placebo$post_bp)){
+  if(bp_list$placebo$post_bp[i] > 130) {
+    bp_list$placebo$status[i] = "high"
+  } else if(bp_list$placebo$post_bp[i] > 120) {
+    bp_list$placebo$status[i] = "borderline"
+  } else if(bp_list$placebo$post_bp[i] <= 120) {
+    bp_list$placebo$status[i] = "optimal"
+  } else {
+    bp_list$placebo$status[i] = "error"
+  }
+}
+
+bp_list$placebo
+```
+
+## Function Writing
+
+Write a function that:
+
+-   takes in a list with two data frames in it as an argument 
+-   takes in an R function with the default value being set to "mean"
+-   Finds the statistic of interest for the pre, post, and diff columns of both data frames
+-   returns the six values as a named list with meaningful names
+
+```{r}
+statistics_twodf <- function(df1, df2, stat = "mean") {
+  list(treatment_df = df1,
+       placebo_df = df2)
+  my_fun <- get(stat)
+  bp_statistics <- list(prebp_treatment = my_fun(df1$pre_bp), 
+                        postbp_treatment = my_fun(df1$post_bp), 
+                        diffbp_treatment = my_fun(df1$diff_bp),
+                        prebp_placebo = my_fun(df2$pre_bp), 
+                        postbp_placebo = my_fun(df2$post_bp), 
+                        diffbp_placebo = my_fun(df2$diff_bp)
+                        )
+  bp_statistics
+}
+```
+
+Apply the function to the treatment and placebo data frames without specifying the statistic. 
+```{r}
+statistics_twodf(bp_list$treatment, bp_list$placebo)
+```
+Apply the function to the treatment and placebo data frames with specifying the statistic as "var". 
+
+```{r}
+statistics_twodf(bp_list$treatment, bp_list$placebo, "var")
+```
+Apply the function to the treatment and placebo data frames with specifying the statistic as "sd".
+```{r}
+statistics_twodf(bp_list$treatment, bp_list$placebo, "sd")
+```
+Apply the function to the treatment and placebo data frames with specifying the statistic as "min".
+```{r}
+statistics_twodf(bp_list$treatment, bp_list$placebo, "min")
+```
+Apply the function to the treatment and placebo data frames with specifying the statistic as "max".
+```{r}
+statistics_twodf(bp_list$treatment, bp_list$placebo, "max")
+```
+
